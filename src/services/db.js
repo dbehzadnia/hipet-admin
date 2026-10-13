@@ -228,9 +228,10 @@ const seed = () => {
     const sender = type === "owner" ? pick(owners) : type === "clinic" ? pick(bookable) : pick(vets)
     const at = ago(int(0, 40))
     const status = i < 15 ? "open" : pick(["open", "in_progress", "closed", "closed"])
-    const messages = [{ from: "user", text: "سلام، " + pick(SUBJ) + " دارم. لطفاً بررسی کنید.", date: iso(at) }]
+    const subject = pick(SUBJ)
+    const messages = [{ from: "user", text: `سلام، درباره «${subject}» پیگیری لازم دارم. لطفاً بررسی کنید.`, date: iso(at) }]
     if (status !== "open") messages.push({ from: "admin", adminName: "نگار پشتیبان", text: "سلام، درخواست شما در حال بررسی است.", date: iso(at + 3600000) })
-    return { id: 4001 + i, senderType: type, senderId: sender.id, subject: pick(SUBJ), status, priority: pick(["low", "normal", "normal", "high"]), createdAt: iso(at), messages }
+    return { id: 4001 + i, senderType: type, senderId: sender.id, subject, status, priority: pick(["low", "normal", "normal", "high"]), createdAt: iso(at), messages }
   })
 
   const templates = [

@@ -35,6 +35,10 @@ import Transactions from "../pages/Finance/Transactions";
 // 7. Clinic settlements
 import Settlements from "../pages/Settlements/index";
 
+// 8. Support
+import TicketsList from "../pages/Support/List";
+import TicketDetail from "../pages/Support/Detail";
+
 // 10. Admin management
 import AdminsList from "../pages/Admins/AdminsList";
 import Roles from "../pages/Admins/Roles";
@@ -65,6 +69,9 @@ const authProtectedRoutes = [
   { path: "/finance/transactions", component: <Transactions />, section: "finance" },
 
   { path: "/settlements", component: <Settlements />, section: "settlements" },
+
+  { path: "/support", component: <TicketsList />, section: "support" },
+  { path: "/support/:id", component: <TicketDetail />, section: "support" },
 
   { path: "/admins", component: <AdminsList />, section: "admins" },
   { path: "/admins/roles", component: <Roles />, section: "admins" },
