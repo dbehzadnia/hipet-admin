@@ -216,7 +216,7 @@ const seed = () => {
     const st = i < 8 ? "pending" : pick(["approved", "approved", "approved", "rejected"])
     const at = ago(int(i < 8 ? 0 : 3, 90))
     return {
-      id: 3001 + i, clinicId: c.id, amount: round(int(500, 6000) * 1000, 10000),
+      id: 3001 + i, clinicId: c.id, amount: round(int(100, 900) * 1000, 10000),
       iban: "IR" + int(10, 99) + "0" + int(100000000, 999999999) + int(100000000, 999999999) + int(1000, 9999),
       status: st, requestedAt: iso(at), decidedAt: st === "pending" ? null : iso(at + DAY), reason: st === "rejected" ? "شماره شبا با نام مالک مطابقت ندارد" : "",
     }

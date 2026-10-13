@@ -32,6 +32,9 @@ import OwnerDetail from "../pages/Owners/Detail";
 import FinanceReports from "../pages/Finance/Reports";
 import Transactions from "../pages/Finance/Transactions";
 
+// 7. Clinic settlements
+import Settlements from "../pages/Settlements/index";
+
 // 10. Admin management
 import AdminsList from "../pages/Admins/AdminsList";
 import Roles from "../pages/Admins/Roles";
@@ -60,6 +63,8 @@ const authProtectedRoutes = [
 
   { path: "/finance", component: <FinanceReports />, section: "finance" },
   { path: "/finance/transactions", component: <Transactions />, section: "finance" },
+
+  { path: "/settlements", component: <Settlements />, section: "settlements" },
 
   { path: "/admins", component: <AdminsList />, section: "admins" },
   { path: "/admins/roles", component: <Roles />, section: "admins" },
