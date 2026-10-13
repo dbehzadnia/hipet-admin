@@ -6,7 +6,7 @@ import Breadcrumbs from "../../components/Common/Breadcrumb"
 import { Loading, Section, StatCard, useLoad } from "../../components/Common/HiPet"
 import { getDashboard } from "../../services/dashboard"
 import { canView } from "../../services/admins"
-import { jdate, jdatetime, num, pct, toman } from "../../utils/format"
+import { faDigits, jdate, jdatetime, num, pct, toman } from "../../utils/format"
 
 const chartBase = {
   chart: { toolbar: { show: false }, fontFamily: "yekan, sans-serif" },
@@ -94,7 +94,7 @@ const Dashboard = () => {
               <ul className="list-unstyled mb-0">
                 {a.failedPayments.slice(0, 8).map(t => (
                   <li key={t.id} className="mb-2">
-                    {canView("appointments") ? <Link to={`/appointments/${t.appointmentId}`}>نوبت {num(t.appointmentId)}</Link> : `نوبت ${num(t.appointmentId)}`}
+                    {canView("appointments") ? <Link to={`/appointments/${t.appointmentId}`}>نوبت {faDigits(t.appointmentId)}</Link> : `نوبت ${faDigits(t.appointmentId)}`}
                     <small className="text-muted ms-2">{t.clinicName} - {toman(t.amount)} - {jdatetime(t.date)}</small>
                   </li>
                 ))}

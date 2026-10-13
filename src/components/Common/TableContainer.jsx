@@ -84,6 +84,7 @@ const TableContainer = ({
   isCustomPageSize,
   handleUserClick,
   isJobListGlobalFilter,
+  rowClassName,
 }) => {
 
   const [columnFilters, setColumnFilters] = useState([]);
@@ -223,7 +224,7 @@ const TableContainer = ({
             )}
             {getRowModel().rows.map(row => {
               return (
-                <tr key={row.id}>
+                <tr key={row.id} className={rowClassName ? rowClassName(row.original) : undefined}>
                   {row.getVisibleCells().map(cell => {
                     return (
                       <td key={cell.id}>
