@@ -20,6 +20,14 @@ import ClinicsList from "../pages/Clinics/List";
 import ClinicDetail from "../pages/Clinics/Detail";
 import Referrals from "../pages/Clinics/Referrals";
 
+// 4. Vets
+import VetsList from "../pages/Vets/List";
+import VetDetail from "../pages/Vets/Detail";
+
+// 5. Pet owners
+import OwnersList from "../pages/Owners/List";
+import OwnerDetail from "../pages/Owners/Detail";
+
 // 10. Admin management
 import AdminsList from "../pages/Admins/AdminsList";
 import Roles from "../pages/Admins/Roles";
@@ -39,6 +47,12 @@ const authProtectedRoutes = [
   { path: "/clinics/:id", component: <ClinicDetail />, section: "clinics" },
   // "View as clinic" is a support tool: anyone who can view clinics may use it; each use is audit-logged.
   { path: "/clinics/:id/view-as", component: <ViewAsClinic />, section: "clinics" },
+
+  { path: "/vets", component: <VetsList />, section: "vets" },
+  { path: "/vets/:id", component: <VetDetail />, section: "vets" },
+
+  { path: "/owners", component: <OwnersList />, section: "owners" },
+  { path: "/owners/:id", component: <OwnerDetail />, section: "owners" },
 
   { path: "/admins", component: <AdminsList />, section: "admins" },
   { path: "/admins/roles", component: <Roles />, section: "admins" },

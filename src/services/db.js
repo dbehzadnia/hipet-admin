@@ -163,7 +163,7 @@ const seed = () => {
     const sp = pick(Object.keys(SPECIES))
     return {
       id: petId++, ownerId: o.id, name: pick(PET_NAMES), species: sp, breed: pick(SPECIES[sp]),
-      birthDate: iso(ago(int(100, 3000))),
+      birthDate: iso(ago(int(450, 3000))),
       records: Array.from({ length: int(0, 4) }, () => ({
         date: iso(ago(int(1, 400))),
         title: pick(["واکسن سالیانه", "ضدانگل", "معاینه عمومی", "آزمایش خون", "جرم‌گیری"]),
