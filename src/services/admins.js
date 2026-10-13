@@ -110,5 +110,5 @@ export const logViewAsClinic = clinic => {
 /** Used by the template's fake login. mock: POST /api/admin/auth/login/ */
 export const authenticate = (email, password) => {
   const a = db().admins.find(x => x.email === email && x.password === password && x.active)
-  return a ? { ...strip(a), username: a.name } : null
+  return a ? { ...strip(a), uid: a.id, username: a.name } : null
 }

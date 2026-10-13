@@ -64,8 +64,9 @@ const Layout = (props) => {
   //hides right sidebar on body click
   const hideRightbar = (event) => {
     var rightbar = document.getElementById("right-bar");
-    //if clicked in inside right bar, then do nothing
-    if (rightbar && rightbar.contains(event.target)) {
+    // Do nothing when the bar is closed (#right-bar only renders while open) or the click is inside it.
+    // Dispatching on every click re-rendered pages mid-click and reset controlled checkboxes.
+    if (!rightbar || rightbar.contains(event.target)) {
       return;
     } else {
       //if clicked in outside of rightbar then fire action for hide rightbar

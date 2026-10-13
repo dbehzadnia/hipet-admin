@@ -79,6 +79,7 @@ const audienceList = a => {
   // vets have no city of their own; they belong to their clinics' cities
   return base.filter(r => !a.cityId || (a.group === "vets" ? r.clinicIds.some(id => find("clinics", id)?.cityId === Number(a.cityId)) : r.cityId === Number(a.cityId)))
 }
+// mock: POST /api/admin/notifications/preview/  {audience} -> {count}
 export const countRecipients = audience => ok(audienceList(audience).length)
 
 // mock: GET /api/admin/notifications/

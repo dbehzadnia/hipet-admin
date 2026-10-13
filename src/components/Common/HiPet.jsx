@@ -96,7 +96,7 @@ export const InfoList = ({ items }) => (
   <div className="table-responsive">
     <table className="table table-nowrap mb-0">
       <tbody>
-        {items.map(([k, v]) => <tr key={k}><th scope="row" className="text-muted fw-normal" style={{ width: "40%" }}>{k}</th><td>{v}</td></tr>)}
+        {items.map(([k, v], i) => <tr key={i}><th scope="row" className="text-muted fw-normal" style={{ width: "40%" }}>{k}</th><td>{v}</td></tr>)}
       </tbody>
     </table>
   </div>
