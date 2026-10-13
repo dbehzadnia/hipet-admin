@@ -4,12 +4,13 @@ import { Container } from "reactstrap"
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import { DataTable, DateRange, FilterBar, Loading, Section, SelectFilter, useLoad } from "../../components/Common/HiPet"
 import { listOwners } from "../../services/owners"
-import { CITIES } from "../../services/db"
+import { listCities } from "../../services/content"
 import { faDigits, inRange, jdate, num, toman } from "../../utils/format"
 
 const OwnersList = () => {
   document.title = "کاربران پت | های‌پت"
   const [list] = useLoad(listOwners)
+  const [cities] = useLoad(listCities)
   const [city, setCity] = useState("")
   const [blocked, setBlocked] = useState("")
   const [range, setRange] = useState([null, null])
@@ -36,7 +37,7 @@ const OwnersList = () => {
         <Breadcrumbs title="های‌پت" breadcrumbItem="کاربران پت" />
         <Section title="لیست کاربران">
           <FilterBar>
-            <SelectFilter value={city} onChange={setCity} placeholder="همه شهرها" options={CITIES.map(c => ({ value: c.id, text: c.name }))} />
+            <SelectFilter value={city} onChange={setCity} placeholder="همه شهرها" options={(cities || []).map(c => ({ value: c.id, text: c.name }))} />
             <SelectFilter value={blocked} onChange={setBlocked} placeholder="همه وضعیت‌ها" options={[{ value: "false", text: "فعال" }, { value: "true", text: "مسدود" }]} />
             <DateRange value={range} onChange={setRange} placeholder="بازه تاریخ عضویت" />
           </FilterBar>

@@ -39,6 +39,13 @@ import Settlements from "../pages/Settlements/index";
 import TicketsList from "../pages/Support/List";
 import TicketDetail from "../pages/Support/Detail";
 
+// 9. Content & settings
+import Services from "../pages/Content/Services";
+import Cities from "../pages/Content/Cities";
+import Notifications from "../pages/Content/Notifications";
+import Discounts from "../pages/Content/Discounts";
+import Reviews from "../pages/Content/Reviews";
+
 // 10. Admin management
 import AdminsList from "../pages/Admins/AdminsList";
 import Roles from "../pages/Admins/Roles";
@@ -72,6 +79,12 @@ const authProtectedRoutes = [
 
   { path: "/support", component: <TicketsList />, section: "support" },
   { path: "/support/:id", component: <TicketDetail />, section: "support" },
+
+  { path: "/content/services", component: <Services />, section: "content" },
+  { path: "/content/cities", component: <Cities />, section: "content" },
+  { path: "/content/notifications", component: <Notifications />, section: "content" },
+  { path: "/content/discounts", component: <Discounts />, section: "content" },
+  { path: "/content/reviews", component: <Reviews />, section: "content" },
 
   { path: "/admins", component: <AdminsList />, section: "admins" },
   { path: "/admins/roles", component: <Roles />, section: "admins" },

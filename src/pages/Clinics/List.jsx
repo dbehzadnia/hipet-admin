@@ -4,7 +4,7 @@ import { Badge, Container } from "reactstrap"
 import Breadcrumbs from "../../components/Common/Breadcrumb"
 import { DataTable, FilterBar, Loading, Section, SelectFilter, Status, useLoad } from "../../components/Common/HiPet"
 import { AMBASSADOR_LEVELS, listClinics } from "../../services/clinics"
-import { CITIES } from "../../services/db"
+import { listCities } from "../../services/content"
 import { faDigits, jdate, num, options } from "../../utils/format"
 
 /** Clinics list; with `requests` it becomes the registration-request queue. */
@@ -12,6 +12,7 @@ const ClinicsList = ({ requests }) => {
   document.title = `${requests ? "درخواست‌های ثبت‌نام کلینیک" : "کلینیک‌ها"} | های‌پت`
   const [params] = useSearchParams()
   const [list] = useLoad(listClinics)
+  const [cities] = useLoad(listCities)
   const [city, setCity] = useState("")
   const [active, setActive] = useState("")
   const [reg, setReg] = useState(params.get("status") || "")
@@ -52,7 +53,7 @@ const ClinicsList = ({ requests }) => {
           <FilterBar>
             <SelectFilter value={reg} onChange={setReg} placeholder="همه وضعیت‌های ثبت‌نام"
               options={options("registration").filter(o => !requests || o.value !== "approved")} />
-            <SelectFilter value={city} onChange={setCity} placeholder="همه شهرها" options={CITIES.map(c => ({ value: c.id, text: c.name }))} />
+            <SelectFilter value={city} onChange={setCity} placeholder="همه شهرها" options={(cities || []).map(c => ({ value: c.id, text: c.name }))} />
             {!requests && <SelectFilter value={active} onChange={setActive} placeholder="فعال و غیرفعال" options={[{ value: "true", text: "فعال" }, { value: "false", text: "غیرفعال" }]} />}
             {!requests && <SelectFilter value={amb} onChange={setAmb} placeholder="وضعیت سفیر" options={[{ value: "none", text: "غیرسفیر" }, ...AMBASSADOR_LEVELS.map(l => ({ value: l, text: `سفیر ${l}` }))]} />}
           </FilterBar>
