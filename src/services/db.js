@@ -193,7 +193,7 @@ const seed = () => {
     const ap = {
       id: apId++, ownerId: pet.ownerId, petId: pet.id, clinicId: clinic.id, vetId: vet.id, serviceId: svc.id,
       datetime: iso(t), status, paymentStatus: payment, price, deposit,
-      emergency: svc.id === 3 || chance(0.04), createdAt: iso(t - int(1, 10) * DAY),
+      emergency: svc.id === 3 || chance(0.04), createdAt: iso(Math.min(now - int(0, 3600000), t - int(1, 10) * DAY)),
     }
     appointments.push(ap)
     if (payment !== "unpaid") {

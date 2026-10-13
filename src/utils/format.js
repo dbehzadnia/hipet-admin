@@ -6,6 +6,8 @@ const tf = new Intl.DateTimeFormat("fa-IR", { hour: "2-digit", minute: "2-digit"
 export const num = n => nf.format(Number(n) || 0)
 export const toman = n => `${num(n)} تومان`
 export const faDigits = s => String(s ?? "").replace(/\d/g, d => "۰۱۲۳۴۵۶۷۸۹"[d])
+const mf = new Intl.DateTimeFormat("fa-IR-u-ca-persian", { year: "numeric", month: "long" })
+export const jmonth = d => mf.format(new Date(d))
 export const jdate = d => (d ? df.format(new Date(d)) : "—")
 export const jdatetime = d => (d ? `${df.format(new Date(d))} - ${tf.format(new Date(d))}` : "—")
 export const pct = (part, total) => (total ? `${nf.format(Math.round((part / total) * 1000) / 10)}٪` : "۰٪")

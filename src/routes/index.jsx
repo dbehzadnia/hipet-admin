@@ -28,6 +28,10 @@ import VetDetail from "../pages/Vets/Detail";
 import OwnersList from "../pages/Owners/List";
 import OwnerDetail from "../pages/Owners/Detail";
 
+// 6. Finance
+import FinanceReports from "../pages/Finance/Reports";
+import Transactions from "../pages/Finance/Transactions";
+
 // 10. Admin management
 import AdminsList from "../pages/Admins/AdminsList";
 import Roles from "../pages/Admins/Roles";
@@ -53,6 +57,9 @@ const authProtectedRoutes = [
 
   { path: "/owners", component: <OwnersList />, section: "owners" },
   { path: "/owners/:id", component: <OwnerDetail />, section: "owners" },
+
+  { path: "/finance", component: <FinanceReports />, section: "finance" },
+  { path: "/finance/transactions", component: <Transactions />, section: "finance" },
 
   { path: "/admins", component: <AdminsList />, section: "admins" },
   { path: "/admins/roles", component: <Roles />, section: "admins" },
