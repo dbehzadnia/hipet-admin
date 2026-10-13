@@ -1,394 +1,116 @@
-import PropTypes from "prop-types";
-import React, { useEffect, useState } from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Button,
-  Card,
-  CardBody,
-  Input,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Table,
-} from "reactstrap";
-import { Link } from "react-router-dom";
+import React from "react"
+import { Link } from "react-router-dom"
+import { Badge, Col, Container, Row } from "reactstrap"
+import ReactApexChart from "react-apexcharts"
+import Breadcrumbs from "../../components/Common/Breadcrumb"
+import { Loading, Section, StatCard, useLoad } from "../../components/Common/HiPet"
+import { getDashboard } from "../../services/dashboard"
+import { canView } from "../../services/admins"
+import { jdate, jdatetime, num, pct, toman } from "../../utils/format"
 
-import classNames from "classnames";
+const chartBase = {
+  chart: { toolbar: { show: false }, fontFamily: "yekan, sans-serif" },
+  dataLabels: { enabled: false },
+  grid: { borderColor: "#f1f1f1" },
+  legend: { position: "top" },
+}
 
-//import Charts
-import StackedColumnChart from "./StackedColumnChart";
+const Dashboard = () => {
+  document.title = "داشبورد | های‌پت"
+  const [d] = useLoad(getDashboard)
+  if (!d) return <div className="page-content"><Loading /></div>
 
-//import action
-import { getChartsData as onGetChartsData } from "../../store/actions";
-
-import modalimage1 from "../../assets/images/product/img-7.png";
-import modalimage2 from "../../assets/images/product/img-4.png";
-
-// Pages Components
-import WelcomeComp from "./WelcomeComp";
-import MonthlyEarning from "./MonthlyEarning";
-import SocialSource from "./SocialSource";
-import ActivityComp from "./ActivityComp";
-import TopCities from "./TopCities";
-
-//Import Breadcrumb
-import Breadcrumbs from "../../components/Common/Breadcrumb";
-
-//i18n
-import { withTranslation } from "react-i18next";
-
-//redux
-import { useSelector, useDispatch } from "react-redux";
-import { createSelector } from "reselect";
-import LatestTranactions from "./LatestTranaction";
-
-const Dashboard = (props) => {
-
-  const [modal, setmodal] = useState(false);
-  const [subscribemodal, setSubscribemodal] = useState(false);
-
-  const DashboardProperties = createSelector(
-    (state) => state.Dashboard,
-    (dashboard) => ({
-      chartsData: dashboard.chartsData
-    })
-  );
-
-  const {
-    chartsData
-  } = useSelector(DashboardProperties);
-
-  const reports = [
-    { title: "سفارشات", iconClass: "bx-copy-alt", description: "1,235" },
-    { title: "درآمد", iconClass: "bx-archive-in", description: "تومان35, 723" },
-    {
-      title: "قیمت میانگین",
-      iconClass: "bx-purchase-tag-alt",
-      description: "16.200.000 تومان",
-    },
-  ];
-
-  useEffect(() => {
-    setTimeout(() => {
-      setSubscribemodal(true);
-    }, 2000);
-  }, []);
-
-  const [periodData, setPeriodData] = useState([]);
-  const [periodType, setPeriodType] = useState("Year");
-
-  useEffect(() => {
-    setPeriodData(chartsData);
-  }, [chartsData]);
-
-  const onChangeChartPeriod = pType => {
-    setPeriodType(pType);
-    dispatch(onGetChartsData(pType));
-  };
-
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(onGetChartsData("Year"));
-  }, [dispatch]);
-
-  //meta title
-  document.title = "Dashboard | Skote - قالب مدیریتی و داشبورد Vite React ";
+  const labels = d.days.map(x => jdate(x.date).slice(5))
+  const visits = {
+    ...chartBase,
+    colors: ["#556ee6"],
+    xaxis: { categories: labels },
+    yaxis: { labels: { formatter: v => num(v) } },
+    tooltip: { y: { formatter: v => `${num(v)} ویزیت` } },
+    plotOptions: { bar: { columnWidth: "45%", borderRadius: 4 } },
+  }
+  const revenue = {
+    ...chartBase,
+    colors: ["#34c38f", "#f1b44c"],
+    stroke: { curve: "smooth", width: 3 },
+    xaxis: { categories: labels },
+    yaxis: { labels: { formatter: v => num(Math.round(v / 1e6)) + " م" } },
+    tooltip: { y: { formatter: v => toman(v) } },
+  }
+  const a = d.alerts
 
   return (
-    <React.Fragment>
-      <div className="page-content">
-        <Container fluid>
-          {/* Render Breadcrumb */}
-          <Breadcrumbs
-            title={props.t("Dashboards")}
-            breadcrumbItem={props.t("داشبورد")}
-          />
+    <div className="page-content">
+      <Container fluid>
+        <Breadcrumbs title="های‌پت" breadcrumbItem="داشبورد" />
+        <Row>
+          <Col md={6} xl={3}><StatCard title="نوبت‌های امروز" value={num(d.todayAppointments)} icon="bx-calendar" /></Col>
+          <Col md={6} xl={3}><StatCard title="کلینیک‌های فعال" value={num(d.activeClinics)} icon="bx-clinic" color="success" /></Col>
+          <Col md={6} xl={3}><StatCard title="دامپزشکان فعال" value={num(d.activeVets)} icon="bx-plus-medical" color="info" /></Col>
+          <Col md={6} xl={3}><StatCard title="کاربران فعال (۳۰ روز)" value={num(d.activeUsers)} icon="bx-group" color="warning" /></Col>
+          <Col md={6} xl={3}><StatCard title="درآمد های‌پت (۳۰ روز)" value={toman(d.monthRevenue)} hint={`گردش کل: ${toman(d.monthGross)}`} icon="bx-money" color="success" /></Col>
+          <Col md={6} xl={3}>
+            <Link to="/clinics/requests"><StatCard title="درخواست ثبت‌نام کلینیک (در انتظار)" value={num(d.pendingClinicRequests)} icon="bx-store" color="primary" /></Link>
+          </Col>
+          <Col md={6} xl={3}>
+            <Link to="/vets?verification=pending"><StatCard title="درخواست ثبت‌نام دامپزشک (در انتظار)" value={num(d.pendingVetRequests)} icon="bx-user-check" color="info" /></Link>
+          </Col>
+          <Col md={6} xl={3}>
+            <StatCard title="نرخ لغو / عدم حضور (۳۰ روز)" value={`${pct(d.cancelled, d.last30Total)} / ${pct(d.noShows, d.last30Total)}`}
+              hint={`${num(d.cancelled)} لغو و ${num(d.noShows)} عدم حضور از ${num(d.last30Total)} نوبت`} icon="bx-x-circle" color="danger" />
+          </Col>
+        </Row>
 
+        <Row>
+          <Col xl={6}>
+            <Section title="ویزیت‌های روزانه (۱۴ روز اخیر)">
+              <ReactApexChart type="bar" height={300} options={visits} series={[{ name: "ویزیت", data: d.days.map(x => x.visits) }]} />
+            </Section>
+          </Col>
+          <Col xl={6}>
+            <Section title="گزارش درآمد روزانه (۱۴ روز اخیر)">
+              <ReactApexChart type="line" height={300} options={revenue}
+                series={[{ name: "سهم های‌پت", data: d.days.map(x => x.revenue) }, { name: "گردش کل", data: d.days.map(x => x.gross) }]} />
+            </Section>
+          </Col>
+        </Row>
+
+        <Section title="هشدارها">
           <Row>
-            <Col xl="4">
-              <WelcomeComp />
-              <MonthlyEarning />
-            </Col>
-            <Col xl="8">
-              <Row>
-                {/* Reports Render */}
-                {(reports || [])?.map((report, key) => (
-                  <Col md="4" key={"_col_" + key}>
-                    <Card className="mini-stats-wid">
-                      <CardBody>
-                        <div className="d-flex">
-                          <div className="flex-grow-1">
-                            <p className="text-muted fw-medium">
-                              {report.title}
-                            </p>
-                            <h4 className="mb-0">{report.description}</h4>
-                          </div>
-                          <div className="avatar-sm rounded-circle bg-primary align-self-center mini-stat-icon">
-                            <span className="avatar-title rounded-circle bg-primary">
-                              <i
-                                className={
-                                  "bx " + report.iconClass + " font-size-24"
-                                }
-                              ></i>
-                            </span>
-                          </div>
-                        </div>
-                      </CardBody>
-                    </Card>
-                  </Col>
+            <Col lg={4}>
+              <h6 className="mb-3"><i className="bx bx-error text-warning me-1" />کلینیک‌های بدون نوبت در ۷ روز اخیر <Badge color="warning" pill>{num(a.idleClinics.length)}</Badge></h6>
+              <ul className="list-unstyled mb-0">
+                {a.idleClinics.slice(0, 8).map(c => (
+                  <li key={c.id} className="mb-2">
+                    {canView("clinics") ? <Link to={`/clinics/${c.id}`}>{c.name}</Link> : c.name}
+                    <small className="text-muted ms-2">آخرین نوبت: {c.lastBooking ? jdate(c.lastBooking) : "هیچ"}</small>
+                  </li>
                 ))}
-              </Row>
-
-              <Card>
-                <CardBody>
-                  <div className="d-sm-flex flex-wrap">
-                    <h4 className="card-title mb-4">ایمیل ارسال شده</h4>
-                    <div className="ms-auto">
-                      <ul className="nav nav-pills">
-                        <li className="nav-item">
-                          <Link
-                            to="#"
-                            className={classNames(
-                              { active: periodType === "Week" },
-                              "nav-link"
-                            )}
-                            onClick={() => {
-                              onChangeChartPeriod("Week");
-                            }}
-                            id="one_month"
-                          >
-                            هفته
-                          </Link>{" "}
-                        </li>
-                        <li className="nav-item">
-                          <Link
-                            to="#"
-                            className={classNames(
-                              { active: periodType === "Month" },
-                              "nav-link"
-                            )}
-                            onClick={() => {
-                              onChangeChartPeriod("Month");
-                            }}
-                            id="one_month"
-                          >
-                            ماه
-                          </Link>
-                        </li>
-                        <li className="nav-item">
-                          <Link
-                            to="#"
-                            className={classNames(
-                              { active: periodType === "Year" },
-                              "nav-link"
-                            )}
-                            onClick={() => {
-                              onChangeChartPeriod("Year");
-                            }}
-                            id="one_month"
-                          >
-                            سال
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  {/* <div className="clearfix"></div> */}
-                  <StackedColumnChart
-                    periodData={periodData}
-                    dataColors='["--bs-primary", "--bs-warning", "--bs-success"]'
-                  />
-                </CardBody>
-              </Card>
+                {!a.idleClinics.length && <li className="text-muted">موردی نیست</li>}
+              </ul>
+            </Col>
+            <Col lg={4}>
+              <h6 className="mb-3"><i className="bx bx-credit-card text-danger me-1" />پرداخت‌های ناموفق (۷ روز) <Badge color="danger" pill>{num(a.failedPayments.length)}</Badge></h6>
+              <ul className="list-unstyled mb-0">
+                {a.failedPayments.slice(0, 8).map(t => (
+                  <li key={t.id} className="mb-2">
+                    {canView("appointments") ? <Link to={`/appointments/${t.appointmentId}`}>نوبت {num(t.appointmentId)}</Link> : `نوبت ${num(t.appointmentId)}`}
+                    <small className="text-muted ms-2">{t.clinicName} - {toman(t.amount)} - {jdatetime(t.date)}</small>
+                  </li>
+                ))}
+                {!a.failedPayments.length && <li className="text-muted">موردی نیست</li>}
+              </ul>
+            </Col>
+            <Col lg={4}>
+              <h6 className="mb-3"><i className="bx bx-message-square-dots text-info me-1" />تیکت‌های باز پشتیبانی</h6>
+              <h2 className="mb-2">{num(a.openTickets)}</h2>
+              {canView("support") && <Link to="/support?status=open" className="btn btn-sm btn-outline-primary">مشاهده تیکت‌ها</Link>}
             </Col>
           </Row>
+        </Section>
+      </Container>
+    </div>
+  )
+}
 
-          <Row>
-            <Col xl="4">
-              <SocialSource />
-            </Col>
-            <Col xl="4">
-              <ActivityComp />
-            </Col>
-
-            <Col xl="4">
-              <TopCities />
-            </Col>
-          </Row>
-
-          <Row>
-            <Col lg="12">
-              <LatestTranactions />
-            </Col>
-          </Row>
-        </Container>
-      </div>
-
-      {/* subscribe ModalHeader */}
-      <Modal
-        isOpen={subscribemodal}
-        role="dialog"
-        autoFocus={true}
-        centered
-        data-toggle="modal"
-        toggle={() => {
-          setSubscribemodal(!subscribemodal);
-        }}
-      >
-        <div>
-          <ModalHeader
-            className="border-bottom-0"
-            toggle={() => {
-              setSubscribemodal(!subscribemodal);
-            }}
-          ></ModalHeader>
-        </div>
-        <div className="modal-body">
-          <div className="text-center mb-4">
-            <div className="avatar-md mx-auto mb-4">
-              <div className="avatar-title bg-light  rounded-circle text-primary h1">
-                <i className="mdi mdi-email-open"></i>
-              </div>
-            </div>
-
-            <div className="row justify-content-center">
-              <div className="col-xl-10">
-                <h4 className="text-primary">دنبال کردن!</h4>
-                <p className="text-muted font-size-14 mb-4">
-                  برای بروز ماندن در نامه جدید ما عضو شوید و اعلان دریافت کنید
-                </p>
-
-                <div className="input-group rounded bg-light">
-                  <Input
-                    type="email"
-                    className="form-control bg-transparent border-0"
-                    placeholder="ایمیل خود را وارد کنید"
-                  />
-                  <Button color="primary" type="button" id="button-addon2">
-                    <i className="bx bxs-paper-plane"></i>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </Modal>
-
-      <Modal
-        isOpen={modal}
-        role="dialog"
-        autoFocus={true}
-        centered={true}
-        className="exampleModal"
-        tabIndex="-1"
-        toggle={() => {
-          setmodal(!modal);
-        }}
-      >
-        <div>
-          <ModalHeader
-            toggle={() => {
-              setmodal(!modal);
-            }}
-          >
-            جزئیات سفارش
-          </ModalHeader>
-          <ModalBody>
-            <p className="mb-2">
-              شناسه محصول: <span className="text-primary">#SK2540</span>
-            </p>
-            <p className="mb-4">
-              نام صورتحساب: <span className="text-primary">ناهید میرآقایی</span>
-            </p>
-
-            <div className="table-responsive">
-              <Table className="table table-centered table-nowrap">
-                <thead>
-                  <tr>
-                    <th scope="col">محصول</th>
-                    <th scope="col">نام محصول</th>
-                    <th scope="col">قیمت</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">
-                      <div>
-                        <img src={modalimage1} alt="" className="avatar-sm" />
-                      </div>
-                    </th>
-                    <td>
-                      <div>
-                        <h5 className="text-truncate font-size-14">
-                          هدفون بی سیم (مشکی)
-                        </h5>
-                        <p className="text-muted mb-0">تومان 225 x 1</p>
-                      </div>
-                    </td>
-                    <td> 255.000 تومان</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      <div>
-                        <img src={modalimage2} alt="" className="avatar-sm" />
-                      </div>
-                    </th>
-                    <td>
-                      <div>
-                        <h5 className="text-truncate font-size-14">
-                          هودی (آبی)
-                        </h5>
-                        <p className="text-muted mb-0">تومان 145.000 x 1</p>
-                      </div>
-                    </td>
-                    <td> 145.000 تومان</td>
-                  </tr>
-                  <tr>
-                    <td colSpan="2">
-                      <h6 className="m-0 text-end">مجموع فرعی:</h6>
-                    </td>
-                    <td>تومان 400</td>
-                  </tr>
-                  <tr>
-                    <td colSpan="2">
-                      <h6 className="m-0 text-end">حمل و نقل دریایی:</h6>
-                    </td>
-                    <td>رایگان</td>
-                  </tr>
-                  <tr>
-                    <td colSpan="2">
-                      <h6 className="m-0 text-end">مجموع:</h6>
-                    </td>
-                    <td>تومان 400</td>
-                  </tr>
-                </tbody>
-              </Table>
-            </div>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              type="button"
-              color="secondary"
-              onClick={() => {
-                setmodal(!modal);
-              }}
-            >
-              بستن
-            </Button>
-          </ModalFooter>
-        </div>
-      </Modal>
-    </React.Fragment>
-  );
-};
-
-Dashboard.propTypes = {
-  t: PropTypes.any,
-  chartsData: PropTypes.any,
-  onGetChartsData: PropTypes.func,
-};
-
-export default withTranslation()(Dashboard);
+export default Dashboard
